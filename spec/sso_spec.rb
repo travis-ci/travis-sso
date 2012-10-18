@@ -23,7 +23,7 @@ describe Travis::SSO do
     end
 
     it 'raises if neither mode nor callbacks are given' do
-      expect { Travis::SSO.new(nil) }.to raise_error(IndexError)
+      expect { Travis::SSO.new(nil) }.to raise_error(ArgumentError)
     end
   end
 

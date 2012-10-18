@@ -10,6 +10,7 @@ require 'open-uri'
 module Travis
   module SSO
     class Generic
+      CALLBACKS = [:pass, :set_user, :authenticated?]
       attr_reader :app, :endpoint, :files, :login_page
 
       def initialize(app, options = {})
@@ -20,6 +21,10 @@ module Travis
         static      = Rack::File.new(static_dir, 'public, must-revalidate')
         @files      = Rack::ConditionalGet.new(static)
         @login_page = File.read(template).gsub('%endpoint%', endpoint)
+
+        CALLBACKS.each do |callback|
+          define_singleton_method(callback, options[callback]) if options.include? callback
+        end
       end
 
       def call(env)

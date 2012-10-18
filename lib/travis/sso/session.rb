@@ -8,6 +8,7 @@ module Travis
       def initialize(app, options = {})
         @user_id_key = options[:user_id_key] || 'user_id'
         @session_key = options[:session_key] || 'rack.session'
+        super
       end
 
       def pass(request)
