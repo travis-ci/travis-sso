@@ -12,8 +12,8 @@ Example Usage:
 
 ``` ruby
 use Travis::SSO,
-  mode: :single_page, # defaults to :callback
-  api_endpoint: "http://localhost:3000" # defaults to "https://api.travis-ci.org"
+  mode: :single_page,                     # defaults to :callback
+  api_endpoint: "http://localhost:3000"   # defaults to "https://api.travis-ci.org"
 ```
 
 ### Session Authentication
@@ -77,7 +77,7 @@ use Travis::SSO,
 
 ### Helpers
 
-This library ships with a simple helpers mixin, implementing a `user` method and aliasing it to `current_user`. It should work for both Rails controllers and Sinatra applications.
+This library ships with a simple helpers mixin, implementing a `current_user` method and aliasing it to `user`. It should work for both Rails controllers and Sinatra applications.
 
 ``` ruby
 class HomeController < ApplicationController
