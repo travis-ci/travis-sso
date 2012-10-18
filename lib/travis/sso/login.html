@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Travis CI - Single Sign-On</title>
+    <link rel="icon" type="image/png" href="%public%/favicon.ico">
+    <script>
+      window.addEventListener('message', function(event) {
+        if(event.origin == "%endpoint%") {
+          document.getElementById('sso_token').value = event.data.token;
+          document.forms[0].submit();
+        }
+      });
+    </script>
+    <style>
+      form { display:none; }
+      iframe { display:none; }
+    </style>
+  </head>
+  <body id="sso">
+    <form method="post">
+      <input type="hidden" name="sso_token" id="sso_token">
+    </form>
+    <iframe src="%endpoint%/auth/post_message?origin=%origin%"></iframe>
+    Logging in...
+  </body>
+</html>

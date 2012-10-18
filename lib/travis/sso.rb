@@ -1,0 +1,26 @@
+module Travis
+  module SSO
+    autoload :Callback,   'travis/sso/callback'
+    autoload :Generic,    'travis/sso/generic'
+    autoload :Helpers,    'travis/sso/helpers'
+    autoload :Session,    'travis/sso/session'
+    autoload :SinglePage, 'travis/sso/single_page'
+
+    def self.new(app, options = {})
+      yield options if block_given?
+      mode = options[:mode] || 'callback'
+      name = mode.to_s.split('_').map(&:capitalize).join
+      const_get(name).new(app, options)
+    end
+
+    # avoid pulling in constants on extend
+    def self.extend_object(*)
+    end
+
+    # this is called by sinatra when used as extension
+    def self.registered(app)
+      app.helpers(Helpers)
+      app.use(self) { |c| c[:mode] = app.sessions? ? :session : :single_page }
+    end
+  end
+end
