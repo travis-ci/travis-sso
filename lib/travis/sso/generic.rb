@@ -10,7 +10,7 @@ require 'open-uri'
 module Travis
   module SSO
     class Generic
-      CALLBACKS = [:pass, :set_user, :authenticated?]
+      CALLBACKS = [:pass, :set_user, :authenticated?, :authorized?]
       attr_reader :app, :endpoint, :files, :login_page
 
       def initialize(app, options = {})
@@ -46,6 +46,10 @@ module Travis
           raise NotImplementedError, 'subclass responsibility'
         end
 
+        def authorized?(user)
+          true
+        end
+
       private
 
         def static(request)
@@ -62,8 +66,13 @@ module Travis
           return unless request.post? and token = request.params['sso_token']
           data = MultiJson.decode(open("#{endpoint}/users?access_token=#{token}").read)
           user = data['user'].merge('token' =>  token)
-          set_user(request, user)
-          pass(request)
+
+          if authorized?(user)
+            set_user(request, user)
+            pass(request)
+          else
+            response(403, "Access Denied")
+          end
         rescue OpenURI::HTTPError => error
           response(error.io.read, Integer(error.message[/40\d/] || 403))
         rescue EOFError

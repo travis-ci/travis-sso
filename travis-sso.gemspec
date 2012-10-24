@@ -3,9 +3,9 @@ Gem::Specification.new do |gem|
   gem.version       = "0.0.1"
   gem.authors       = ["Konstantin Haase"]
   gem.email         = ["konstantin.mailinglists@googlemail.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
-  gem.homepage      = ""
+  gem.description   = %q{Travis CI Singe Sign-On as a Rack middleware}
+  gem.summary       = %q{Travis CI Singe Sign-On as a Rack middleware}
+  gem.homepage      = "https://github.com/travis-ci/travis-sso"
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
