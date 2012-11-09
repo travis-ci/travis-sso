@@ -4,6 +4,7 @@ module Travis
     autoload :Generic,    'travis/sso/generic'
     autoload :Helpers,    'travis/sso/helpers'
     autoload :Session,    'travis/sso/session'
+    autoload :Test,       'travis/sso/test'
     autoload :SinglePage, 'travis/sso/single_page'
 
     def self.new(app, options = {})
