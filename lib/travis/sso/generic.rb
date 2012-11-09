@@ -11,11 +11,12 @@ module Travis
   module SSO
     class Generic
       CALLBACKS = [:pass, :set_user, :authenticated?, :authorized?]
-      attr_reader :app, :endpoint, :files, :login_page
+      attr_reader :app, :endpoint, :files, :login_page, :accept
 
       def initialize(app, options = {})
         @app        = app
         @endpoint   = options[:endpoint]   || "https://api.travis-ci.org"
+        @accept     = options[:accept]     || 'application/vnd.travis-ci.2+json'
         static_dir  = options[:static_dir] || File.expand_path('../public',     __FILE__)
         template    = options[:template]   || File.expand_path('../login.html', __FILE__)
         static      = Rack::File.new(static_dir, 'public, must-revalidate')
@@ -64,7 +65,8 @@ module Travis
 
         def login(request)
           return unless request.post? and token = request.params['sso_token']
-          data = MultiJson.decode(open("#{endpoint}/users?access_token=#{token}").read)
+          raw  = open("#{endpoint}/users?access_token=#{token}", 'Accept' => accept)
+          data = MultiJson.decode(raw.read)
           user = data['user'].merge('token' =>  token)
 
           if authorized?(user)
