@@ -75,6 +75,24 @@ use Travis::SSO,
   authenticated?: -> r   { r.session.include? 'token'      }
 ```
 
+### Whitelisting URLs
+
+``` ruby
+use Travis::SSO,
+  mode: :single_page,
+  whitelist: "/img/*"
+```
+
+You can pass in a String, a Regular Expression or an Array of these.
+
+If you need something more fancy, you can also add a `whitelisted?` callback:
+
+``` ruby
+use Travis::SSO,
+  mode: :single_page,
+  whitelisted?: -> r { r.user_agent =~ /Safari/ }
+```
+
 ### Helpers
 
 This library ships with a simple helpers mixin, implementing a `current_user` method and aliasing it to `user`. It should work for both Rails controllers and Sinatra applications.
