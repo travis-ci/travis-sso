@@ -10,8 +10,9 @@ require 'open-uri'
 module Travis
   module SSO
     class Generic
-      CALLBACKS = [:pass, :set_user, :authenticated?, :authorized?]
-      attr_reader :app, :endpoint, :files, :login_page, :accept
+      WHITELIST = ['/favicon.ico']
+      CALLBACKS = [:pass, :set_user, :authenticated?, :authorized?, :whitelisted?]
+      attr_reader :app, :endpoint, :files, :login_page, :accept, :whitelist
 
       def initialize(app, options = {})
         @app        = app
@@ -22,6 +23,7 @@ module Travis
         static      = Rack::File.new(static_dir, 'public, must-revalidate')
         @files      = Rack::ConditionalGet.new(static)
         @login_page = File.read(template).gsub('%endpoint%', endpoint)
+        @whitelist  = WHITELIST + Array(options[:whitelist])
 
         CALLBACKS.each do |callback|
           define_singleton_method(callback, options[callback]) if options.include? callback
@@ -30,7 +32,7 @@ module Travis
 
       def call(env)
         request = Rack::Request.new(env)
-        static(request) || login(request) || handshake(request) || allow(request)
+        whitelisted(request) || static(request) || login(request) || handshake(request) || allow(request)
       end
 
       protected
@@ -51,7 +53,21 @@ module Travis
           true
         end
 
+        def whitelisted?(request)
+          whitelist.any? do |pattern|
+            if pattern.respond_to? :to_str
+              File.fnmatch?(pattern.to_str, request.path_info)
+            else
+              pattern === request.path_info
+            end
+          end
+        end
+
       private
+
+        def whitelisted(request)
+          allow(request) if whitelisted? request
+        end
 
         def static(request)
           return unless request.path_info =~ %r[^(/?__travis__)(/.*)$]

@@ -3,7 +3,7 @@ require 'travis/sso'
 module Travis
   module SSO
     class Callback < Generic
-      OPTIONAL_CALLBACKS = [:authorized?]
+      OPTIONAL_CALLBACKS = [:authorized?, :whitelisted?]
 
       def initialize(app, options = {})
         check = CALLBACKS - OPTIONAL_CALLBACKS

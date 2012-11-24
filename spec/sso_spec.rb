@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'ostruct'
 
 describe Travis::SSO do
   describe 'as middleware' do
@@ -24,6 +25,41 @@ describe Travis::SSO do
 
     it 'raises if neither mode nor callbacks are given' do
       expect { Travis::SSO.new(nil) }.to raise_error(ArgumentError)
+    end
+  end
+
+  describe 'whitelisted routes' do
+    let(:request) { OpenStruct.new(path_info: '/foo/bar', env: {}) }
+    let(:app) { proc { |e| } }
+
+    it 'pipes white listed routes right through' do
+      sso = Travis::SSO::Generic.new(app, whitelist: '/foo/bar')
+      app.should_receive(:call).once
+      sso.send(:whitelisted, request)
+    end
+
+    it 'accepts patterns' do
+      sso = Travis::SSO::Generic.new(app, whitelist: '/foo/*')
+      app.should_receive(:call).once
+      sso.send(:whitelisted, request)
+    end
+
+    it 'accepts regexps' do
+      sso = Travis::SSO::Generic.new(app, whitelist: /foo/)
+      app.should_receive(:call).once
+      sso.send(:whitelisted, request)
+    end
+
+    it 'accepts arrays' do
+      sso = Travis::SSO::Generic.new(app, whitelist: ['/bar', /foo/])
+      app.should_receive(:call).once
+      sso.send(:whitelisted, request)
+    end
+
+    it 'reject non-matching routes' do
+      sso = Travis::SSO::Generic.new(app, whitelist: '/foo')
+      app.should_receive(:call).never
+      sso.send(:whitelisted, request)
     end
   end
 
