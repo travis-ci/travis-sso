@@ -27,7 +27,7 @@ module Travis
           user_info     = env['travis.user_info'] || {}
           user_id       = user_info['id']         ||= session['user_id']
           user_class    = Travis::SSO::Helpers.user_class
-          user_class.respond_to?(:find) ? user_class.find(user_id) : user_class.new(user_info) if user_id
+          user_class.respond_to?(:find_by_id) ? user_class.find_by_id(user_id) : user_class.new(user_info) if user_id
         end
       end
 

@@ -81,10 +81,10 @@ describe Travis::SSO::Helpers do
       current_user.should be_a(subclass)
     end
 
-    it 'calls find(id) on the user_class if avaiable' do
+    it 'calls find_by_id(id) on the user_class if avaiable' do
       subclass = Class.new
       Travis::SSO::Helpers.should_receive(:user_class).and_return(subclass)
-      subclass.should_receive(:find).with(42).and_return("Klaus")
+      subclass.should_receive(:find_by_id).with(42).and_return("Klaus")
 
       stub! :session => { 'user_id' => 42 }
       current_user.should be == "Klaus"
