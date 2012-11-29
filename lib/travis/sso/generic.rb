@@ -89,7 +89,7 @@ module Travis
             set_user(request, user)
             pass(request)
           else
-            response(403, "Access Denied")
+            response(403, "access denied for #{user['login']}", "Content-Type" => "text/plain")
           end
         rescue OpenURI::HTTPError => error
           response(error.io.read, Integer(error.message[/40\d/] || 403))
