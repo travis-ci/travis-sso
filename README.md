@@ -93,6 +93,18 @@ use Travis::SSO,
   whitelisted?: -> r { r.user_agent =~ /Safari/ }
 ```
 
+### Limiting Users
+
+Optionally, any mode takes an `authirzed?` callback you can use to limit user access:
+
+``` ruby
+use Travis::SSO,
+  mode: :single_page,
+  authorized?: -> u { u['login'] == 'dhh' } # let only dhh use this app
+```
+
+The hash handed to the call back corresponds to the data returned by [travis-api](https://api.travis-ci.org/docs/#/users/).
+
 ### Helpers
 
 This library ships with a simple helpers mixin, implementing a `current_user` method and aliasing it to `user`. It should work for both Rails controllers and Sinatra applications.
