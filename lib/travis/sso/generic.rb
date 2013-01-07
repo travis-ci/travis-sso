@@ -107,7 +107,6 @@ module Travis
             prefix = File.join(request.script_name, '__travis__')
             origin = "#{request.scheme}://#{request.host_with_port}"
             response login_page.gsub('%public%', prefix).gsub('%origin%', origin)
-          elsif request.post? and token = request.params['token']
           else
             response(405, "must be <a href='#{request.url}'>GET</a> request", 'Allow' => 'GET, HEAD')
           end
