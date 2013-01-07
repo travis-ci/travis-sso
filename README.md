@@ -103,7 +103,7 @@ use Travis::SSO,
   authorized?: -> u { u['login'] == 'dhh' } # let only dhh use this app
 ```
 
-The hash handed to the call back corresponds to the data returned by [travis-api](https://api.travis-ci.org/docs/#/users/).
+The hash handed to the callback corresponds to the data returned by [travis-api](https://api.travis-ci.org/docs/#/users/).
 
 ### Helpers
 
