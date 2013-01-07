@@ -80,7 +80,7 @@ module Travis
         end
 
         def login(request)
-          return unless request.post? and token = request.params['sso_token']
+          return unless token = sso_token(request)
           raw  = open("#{endpoint}/users?access_token=#{token}", 'Accept' => accept)
           data = MultiJson.decode(raw.read)
           user = data['user'].merge('token' =>  token)
@@ -96,12 +96,18 @@ module Travis
         rescue EOFError
         end
 
+        def sso_token(request)
+          return unless request.post? and params = request.params
+          params.fetch('sso_token') { params['token'] if params.include? 'user' }
+        end
+
         def handshake(request)
           return if authenticated?(request)
           if request.head? or request.get?
             prefix = File.join(request.script_name, '__travis__')
             origin = "#{request.scheme}://#{request.host_with_port}"
             response login_page.gsub('%public%', prefix).gsub('%origin%', origin)
+          elsif request.post? and token = request.params['token']
           else
             response(405, "must be <a href='#{request.url}'>GET</a> request", 'Allow' => 'GET, HEAD')
           end

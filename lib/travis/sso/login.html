@@ -6,9 +6,13 @@
     <link rel="icon" type="image/png" href="%public%/favicon.ico">
     <script>
       window.addEventListener('message', function(event) {
-        if(event.origin == "%endpoint%" && event.data.token) {
-          document.getElementById('sso_token').value = event.data.token;
-          document.forms[0].submit();
+        if(event.origin == "%endpoint%") {
+          if(event.data.token) {
+            document.getElementById('sso_token').value = event.data.token;
+            document.forms[0].submit();
+          } else if(event.data == "redirect") {
+            window.location = "%endpoint%/auth/handshake?redirect_uri=%origin%";
+          }
         }
       });
       window.setTimeout(function() {
