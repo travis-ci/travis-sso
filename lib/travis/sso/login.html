@@ -2,6 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
+    <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,800' rel='stylesheet' type='text/css'>
     <title>Travis CI - Single Sign-On</title>
     <link rel="icon" type="image/png" href="%public%/favicon.ico">
     <script>
@@ -26,18 +27,11 @@
       form { display:none; }
       iframe { display:none; }
       body {
-        background-color: #b2afa0;
-        background-image: -webkit-linear-gradient(top, #9e9a86 10px, #b2afa0 200px);
-        background-image: -moz-linear-gradient(top, #9e9a86 10px, #b2afa0 200px);
-        background-image: linear-gradient(top, #9e9a86 10px, #b2afa0 200px);
-        background-repeat: repeat-x;
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-        color: #323028;
+        background-color: #ffffff;
+        font-family: "Source Sans Pro", Helvetica, Arial, sans-serif;
+        color: #337389;
       }
       #logo {
-        -webkit-animation: blink 2s linear alternate infinite;
-        -moz-animation: blink 2s linear alternate infinite;
-        animation: blink 2s linear alternate infinite;
         margin-left: -45px;
       }
       #login {
@@ -45,16 +39,18 @@
         margin-top: 8%;
       }
       #message {
-        text-transform: uppercase;
-        text-shadow: 0px 1px 1px #222018;
-        font-size: 16px;
+        margin-top: 45px;
+        font-size: 35px;
         font-weight: bold;
       }
       a {
         text-decoration: underline;
-        color: #000;
+        color: #40454F;
       }
       #warning {
+        margin-top: 20px;
+        font-size: 20px;
+        color: #919191;
         display: none;
       }
     </style>
@@ -65,10 +61,10 @@
     </form>
     <iframe src="%endpoint%/auth/post_message?origin=%origin%"></iframe>
     <div id='login'>
-      <img src='%public%/travis.png' alt='Travis CI' id='logo' />
-      <div id='message'>authenticating</div>
+      <img src='%public%/mustache-spinner.gif' alt='Travis CI' id='logo' />
+      <div id='message'>Authenticating</div>
       <div id='warning'>
-        Authentication seems to take awfully long. Please
+        Authentication seems to take awfully long.</br> Please
         <a href="%endpoint%/auth/handshake?redirect_uri=%origin%">make sure</a> you are properly logged in.
       </div>
     </div>
