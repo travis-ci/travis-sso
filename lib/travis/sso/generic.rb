@@ -75,8 +75,8 @@ module Travis
           end
         end
 
-        def describe_otp(request)
-          request.host
+        def describe_otp(request, user)
+          "#{request.host}: #{user['login']}"
         end
 
         def generate_otp_secret(user)
@@ -149,7 +149,7 @@ module Travis
           else
             secret  = params(request)['otp_secret'] || generate_otp_secret(user)
             totp    = ROTP::TOTP.new(secret)
-            otp_url = totp.provisioning_uri(describe_otp(request))
+            otp_url = totp.provisioning_uri(describe_otp(request, user))
             qr_img  = "https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=#{Rack::Utils.escape(otp_url)}"
             if totp.verify(otp)
               set_otp_secret(user, secret)

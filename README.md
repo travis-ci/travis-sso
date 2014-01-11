@@ -105,6 +105,25 @@ use Travis::SSO,
 
 The hash handed to the callback corresponds to the data returned by [travis-api](https://api.travis-ci.org/docs/#/users/).
 
+### Two-Factor Authentication
+
+The SSO middleware comes with two-factor authentication support built-in.
+
+All you need to do is provide callbacks for storing and retrieving a secret value per user:
+
+``` ruby
+secrets = {} # storing secrets in memory, not a good idea
+
+use Travis::SSO,
+  mode: :single_page,
+  get_otp_secret: -> user { secrets[user['login']] },
+  set_otp_secret: -> user, secret { secrets[user['login']] = secret }
+```
+
+There are two additional callbacks: `describe_otp(request, user)` to generate the service description and `generate_otp_secret(user)` to override how the secret is generated.
+
+Note that it currently does not support sending out text messages, you will have to use an application like Google Authenticator.
+
 ### Helpers
 
 This library ships with a simple helpers mixin, implementing a `current_user` method and aliasing it to `user`. It should work for both Rails controllers and Sinatra applications.
