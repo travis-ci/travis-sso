@@ -1,10 +1,9 @@
 require 'travis/sso'
-require 'sinatra'
+require 'sinatra/base'
 
-configure do |c|
-  c.register Travis::SSO
+class Application < Sinatra::Base
+  register Travis::SSO
+  get('/') { "Hi, #{user.name}!"}
 end
 
-get '/' do
-  "Hi, #{user.name}!"
-end
+Application.run! if __FILE__ == $0
