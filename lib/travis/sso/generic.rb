@@ -33,7 +33,7 @@ module Travis
         @whitelist     = WHITELIST + Array(options[:whitelist])
         @use_otp       = !!options[:get_otp_secret]
 
-        if options[:get_otp_secret] ^ options[:set_otp_secret]
+        if options.include?(:get_otp_secret) ^ options.include?(:set_otp_secret)
           raise ArgumentError, "to enable two-factor auth, set both get_otp_secret and set_otp_secret"
         end
 
@@ -126,7 +126,7 @@ module Travis
         end
 
         def params(request)
-          params = request.params unless request.post?
+          params = request.params if request.post?
           params || {}
         end
 
@@ -141,28 +141,28 @@ module Travis
 
         def otp(user, request)
           return unless use_otp?
-          secret = get_otp_secret(user) || params(request)['otp_secret']
+          secret = get_otp_secret(user)
           otp    = params(request)['otp'].to_i
           if secret
             totp = ROTP::TOTP.new(secret)
-            if totp.verify(otp)
-              set_otp_secret(user, secret) unless get_otp_secret(user) == secret
-              nil
-            else
-              template(otp_page, request, user)
-            end
+            template(otp_page, request, user) unless totp.verify(otp)
           else
-            secret  = generate_otp_secret(user)
+            secret  = params(request)['otp_secret'] || generate_otp_secret(user)
             totp    = ROTP::TOTP.new(secret)
             otp_url = totp.provisioning_uri(describe_otp(request))
             qr_img  = "https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=#{Rack::Utils.escape(otp_url)}"
-            template(setup_page, request, user, otp_secret: secret, otp_url: otp_url, qr_img: qr_img)
+            if totp.verify(otp)
+              set_otp_secret(user, secret)
+              nil
+            else
+              template(setup_page, request, user, otp_secret: secret, otp_url: otp_url, qr_img: qr_img)
+            end
           end
         end
 
         def template(content, request, *replace)
           replace.unshift(public: File.join(request.script_name, '__travis__'), origin: "#{request.scheme}://#{request.host_with_port}")
-          replace.each { |m| m.each { |k,v| content = content.gsub("%#{k}%", v) } }
+          replace.each { |m| m.each { |k,v| content = content.gsub("%#{k}%", v.to_s) } }
           response content
         end
 
