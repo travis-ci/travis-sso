@@ -44,7 +44,7 @@ module Travis
 
       def call(env)
         request = Rack::Request.new(env)
-        whitelisted(request) || static(request) || login(request) || handshake(request) || otp(request) || allow(request)
+        whitelisted(request) || static(request) || login(request) || handshake(request) || allow(request)
       end
 
       protected
