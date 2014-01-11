@@ -153,6 +153,17 @@ get '/' do
 end
 ```
 
+The middleware can be configured via the `sso` setting:
+
+``` ruby
+set :sso, whitelist: "/img/*"
+register Travis::SSO
+
+get '/' do
+  "Hello, #{user.name}!"
+end
+```
+
 ## Contributing
 
 1. Fork it
