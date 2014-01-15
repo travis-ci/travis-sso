@@ -32,6 +32,7 @@
       <p>This application requires <b>two-factor authentication</b>.</p>
       <p>Please enter a valid one time password:</p>
       <form method="post">
+        <input type="hidden" name="authenticity_token" id="authenticity_token" value="%csrf%">
         <input type="hidden" name="sso_token" value="%token%">
         <input type="text" name="otp" id="otp" autofocus autocomplete="off" pattern="\d{6}">
         <input type="submit" value="login" id="login">

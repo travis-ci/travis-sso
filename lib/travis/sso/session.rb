@@ -28,6 +28,11 @@ module Travis
         def session(request)
           request.env.fetch(session_key)
         end
+
+        def authenticity_token(request)
+          session = session(request)
+          session[:csrf] || session['_csrf_token']
+        end
     end
   end
 end

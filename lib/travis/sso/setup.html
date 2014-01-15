@@ -42,6 +42,7 @@
       <a href="%otp_url%"><img id="qr" src="%qr_img%" alt="QR code"></a>
       <p>Then enter a valid one time password:</p>
       <form method="post">
+        <input type="hidden" name="authenticity_token" id="authenticity_token" value="%csrf%">
         <input type="hidden" name="sso_token" value="%token%">
         <input type="hidden" name="otp_secret" value="%otp_secret%">
         <input type="text" name="otp" id="otp" autofocus autocomplete="off" pattern="\d{6}">
