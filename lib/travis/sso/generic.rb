@@ -7,6 +7,7 @@ require 'rack/conditionalget'
 require 'multi_json'
 require 'open-uri'
 require 'rotp'
+require 'yubikey'
 
 module Travis
   module SSO
@@ -142,18 +143,38 @@ module Travis
         def otp(user, request)
           return unless use_otp?
           secret = get_otp_secret(user)
-          otp    = params(request)['otp'].to_i
+          otp    = params(request)['otp']
           if secret
-            totp = ROTP::TOTP.new(secret)
-            template(otp_page, request, user) unless totp.verify(otp)
+            if otp =~ /\A\d{6}\z/
+              totp = ROTP::TOTP.new(secret)
+              template(otp_page, request, user) unless totp.verify(otp.to_i)
+            elsif otp && (32..48).cover?(otp)
+              yubikey = Yubikey::OTP::Verify.new(otp: otp)
+              unless otp.start_with?(secret) && yubikey.valid?
+                template(otp_page, request, user)
+              end
+            else
+              template(otp_page, request, user)
+            end
           else
             secret  = params(request)['otp_secret'] || generate_otp_secret(user)
             totp    = ROTP::TOTP.new(secret)
             otp_url = totp.provisioning_uri(describe_otp(request, user))
             qr_img  = "https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=#{Rack::Utils.escape(otp_url)}"
-            if totp.verify(otp)
-              set_otp_secret(user, secret)
-              nil
+
+            if otp =~ /\A\d{6}\z/
+              if totp.verify(otp.to_i)
+                set_otp_secret(user, secret)
+                nil
+              else
+                template(setup_page, request, user, otp_secret: secret, otp_url: otp_url, qr_img: qr_img)
+              end
+            elsif otp && (32..48).cover?(otp.size)
+              yubikey = Yubikey::OTP::Verify.new(otp: otp)
+              if yubikey.valid?
+                set_otp_secret(user, otp[0, 12])
+                nil
+              end
             else
               template(setup_page, request, user, otp_secret: secret, otp_url: otp_url, qr_img: qr_img)
             end
