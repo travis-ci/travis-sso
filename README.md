@@ -12,8 +12,8 @@ Example Usage:
 
 ``` ruby
 use Travis::SSO,
-  mode: :single_page,                     # defaults to :callback
-  api_endpoint: "http://localhost:3000"   # defaults to "https://api.travis-ci.org"
+  mode: :single_page,                 # defaults to :callback
+  endpoint: "http://localhost:3000"   # defaults to "https://api.travis-ci.org"
 ```
 
 ### Session Authentication
@@ -95,7 +95,7 @@ use Travis::SSO,
 
 ### Limiting Users
 
-Optionally, any mode takes an `authirzed?` callback you can use to limit user access:
+Optionally, any mode takes an `authorized?` callback you can use to limit user access:
 
 ``` ruby
 use Travis::SSO,
