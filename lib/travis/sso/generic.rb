@@ -26,7 +26,7 @@ module Travis
         template       = options[:template]       || File.expand_path('../login.html', __FILE__)
         otp_template   = options[:otp_template]   || File.expand_path('../otp.html', __FILE__)
         setup_template = options[:setup_template] || File.expand_path('../setup.html', __FILE__)
-        static         = Rack::File.new(static_dir, 'public, must-revalidate')
+        static         = Rack::File.new(static_dir)
         @files         = Rack::ConditionalGet.new(static)
         @login_page    = File.read(template).gsub('%endpoint%', endpoint)
         @otp_page      = File.read(otp_template)
