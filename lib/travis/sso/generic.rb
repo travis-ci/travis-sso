@@ -182,7 +182,7 @@ module Travis
         end
 
         def template(content, request, *replace)
-          replace.unshift(public: File.join(request.script_name, '__travis__'), origin: "#{request.scheme}://#{request.host_with_port}")
+          replace.unshift(public: File.join(request.script_name, '__travis__'), origin: request.url)
           replace.unshift(csrf: authenticity_token(request))
           replace.each { |m| m.each { |k,v| content = content.gsub("%#{k}%", v.to_s) } }
           response content
