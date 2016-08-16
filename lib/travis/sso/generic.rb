@@ -2,7 +2,6 @@ require 'travis/sso'
 
 require 'rack/request'
 require 'rack/file'
-require 'rack/conditionalget'
 
 require 'multi_json'
 require 'open-uri'
