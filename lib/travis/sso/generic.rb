@@ -144,7 +144,7 @@ module Travis
           if secret
             if otp =~ /\A\d{6}\z/
               totp = ROTP::TOTP.new(secret)
-              template(otp_page, request, user) unless totp.verify(otp.to_i)
+              template(otp_page, request, user) unless totp.verify(otp)
             elsif otp && (32..48).cover?(otp)
               yubikey = Yubikey::OTP::Verify.new(otp: otp)
               unless otp.start_with?(secret) && yubikey.valid?
@@ -160,7 +160,7 @@ module Travis
             qr_img  = "https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=#{Rack::Utils.escape(otp_url)}"
 
             if otp =~ /\A\d{6}\z/
-              if totp.verify(otp.to_i)
+              if totp.verify(otp)
                 set_otp_secret(user, secret)
                 nil
               else
