@@ -12,7 +12,7 @@ module Travis
       end
 
       def pass(request)
-        response(303, 'Location' => request.url)
+        response(303, 'Location' => request.url, 'Clear-Site-Data' => '')
       end
 
       def set_user(request, user)

@@ -21,7 +21,6 @@ end
 
 RSpec.configure do |c|
   c.color = true
-  c.expect_with :rspec, :stdlib
   c.mock_with :flexmock
   c.include Helpers
 
