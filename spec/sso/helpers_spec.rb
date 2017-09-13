@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Travis::SSO::Helpers do
-  subject { Object.new.extend(described_class) }
+  subject { Object.new.extend(Travis::SSO::Helpers) }
 
   def current_user
     subject.current_user
