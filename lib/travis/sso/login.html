@@ -31,9 +31,6 @@
         font-family: "Source Sans Pro", Helvetica, Arial, sans-serif;
         color: #337389;
       }
-      #logo {
-        margin-left: -45px;
-      }
       #login {
         text-align: center;
         margin-top: 8%;
@@ -57,6 +54,7 @@
   </head>
   <body id="sso">
     <form method="post">
+      <input type="hidden" name="authenticity_token" id="authenticity_token" value="%csrf%">
       <input type="hidden" name="sso_token" id="sso_token">
     </form>
     <iframe src="%endpoint%/auth/post_message?origin=%origin%"></iframe>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Travis CI - Single Sign-On</title>
+    <link rel="icon" type="image/png" href="%public%/favicon.ico">
+    <style>
+      body {
+        background-color: #fff;
+        font-family: "Source Sans Pro", Helvetica, Arial, sans-serif;
+        color: #000;
+      }
+      #main {
+        width: 460px;
+        margin: 10px auto;
+        padding: 40px 60px;
+        text-align: center;
+      }
+      #qr {
+        width: 200px;
+        height: 200px;
+        margin: 20px 130px;
+      }
+      #otp {
+        width: 200px;
+        font-size: 30px;
+        margin: 0px 130px;
+        text-align: center;
+      }
+      #login {
+        margin: 20px 180px;
+        width: 100px;
+      }
+    </style>
+  </head>
+  <body id="sso">
+    <div id="main">
+      <p>This application requires <b>two-factor authentication</b>. It has not yet been set up for your account.</p>
+      <p>
+        Please install <a href="https://support.google.com/accounts/answer/1066447?hl=en">Google Authenticator</a> (or something similar)
+        and use it to <b>scan this QR code</b>:
+      </p>
+      <a href="%otp_url%"><img id="qr" src="%qr_img%" alt="QR code"></a>
+      <p>Then enter a valid one time password:</p>
+      <form method="post">
+        <input type="hidden" name="authenticity_token" id="authenticity_token" value="%csrf%">
+        <input type="hidden" name="sso_token" value="%token%">
+        <input type="hidden" name="otp_secret" value="%otp_secret%">
+        <input type="text" name="otp" id="otp" autofocus autocomplete="off" pattern="\d{6}">
+        <input type="submit" value="login" id="login">
+      </form>
+    </div>
+  </body>
+</html>

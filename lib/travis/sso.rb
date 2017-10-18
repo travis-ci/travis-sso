@@ -7,7 +7,8 @@ module Travis
     autoload :Test,       'travis/sso/test'
     autoload :SinglePage, 'travis/sso/single_page'
 
-    def self.new(app, options = {})
+    def self.new(app, options = nil)
+      options ||= {}
       yield options if block_given?
       mode = options[:mode] || 'callback'
       name = mode.to_s.split('_').map(&:capitalize).join
@@ -21,7 +22,8 @@ module Travis
     # this is called by sinatra when used as extension
     def self.registered(app)
       app.helpers(Helpers)
-      app.use(self) { |c| c[:mode] = app.sessions? ? :session : :single_page }
+      settings = app.settings.sso if app.settings.respond_to?(:sso)
+      app.use(self, settings) { |c| c[:mode] = app.sessions? ? :session : :single_page }
     end
   end
 end
