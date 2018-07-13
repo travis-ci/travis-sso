@@ -8,19 +8,19 @@ describe Travis::SSO do
     end
 
     it 'maps session mode to Travis::SSO::Session' do
-      Travis::SSO.new(nil, :mode => :session).should be_a(Travis::SSO::Session)
+      expect(Travis::SSO.new(nil, :mode => :session)).to be_a(Travis::SSO::Session)
     end
 
     it 'maps single_page mode to Travis::SSO::SinglePage' do
-      Travis::SSO.new(nil, :mode => :single_page).should be_a(Travis::SSO::SinglePage)
+      expect(Travis::SSO.new(nil, :mode => :single_page)).to be_a(Travis::SSO::SinglePage)
     end
 
     it 'maps callback mode to Travis::SSO::Session' do
-      Travis::SSO.new(nil, callbacks.merge(:mode => :callback)).should be_a(Travis::SSO::Callback)
+      expect(Travis::SSO.new(nil, callbacks.merge(:mode => :callback))).to be_a(Travis::SSO::Callback)
     end
 
     it 'defaults to callback mode' do
-      Travis::SSO.new(nil, callbacks).should be_a(Travis::SSO::Callback)
+      expect(Travis::SSO.new(nil, callbacks)).to be_a(Travis::SSO::Callback)
     end
 
     it 'raises if neither mode nor callbacks are given' do
@@ -34,31 +34,31 @@ describe Travis::SSO do
 
     it 'pipes white listed routes right through' do
       sso = Travis::SSO::Generic.new(app, whitelist: '/foo/bar')
-      app.should_receive(:call).once
+      expect(app).to receive(:call).once
       sso.send(:whitelisted, request)
     end
 
     it 'accepts patterns' do
       sso = Travis::SSO::Generic.new(app, whitelist: '/foo/*')
-      app.should_receive(:call).once
+      expect(app).to receive(:call).once
       sso.send(:whitelisted, request)
     end
 
     it 'accepts regexps' do
       sso = Travis::SSO::Generic.new(app, whitelist: /foo/)
-      app.should_receive(:call).once
+      expect(app).to receive(:call).once
       sso.send(:whitelisted, request)
     end
 
     it 'accepts arrays' do
       sso = Travis::SSO::Generic.new(app, whitelist: ['/bar', /foo/])
-      app.should_receive(:call).once
+      expect(app).to receive(:call).once
       sso.send(:whitelisted, request)
     end
 
     it 'reject non-matching routes' do
       sso = Travis::SSO::Generic.new(app, whitelist: '/foo')
-      app.should_receive(:call).never
+      expect(app).to_not receive(:call)
       sso.send(:whitelisted, request)
     end
   end
@@ -68,21 +68,21 @@ describe Travis::SSO do
     let(:middleware) { app.middleware.map(&:first) }
 
     it 'pulls in helpers' do
-      app.ancestors.should include(Travis::SSO::Helpers)
+      expect(app.ancestors).to include(Travis::SSO::Helpers)
     end
 
     it 'sets up the middleware' do
-      middleware.should include(Travis::SSO)
+      expect(middleware).to include(Travis::SSO)
     end
 
     it 'defaults to single_page mode' do
-      Travis::SSO::SinglePage.should_receive(:new).once.pass_thru
+      expect(Travis::SSO::SinglePage).to receive(:new).once.and_call_original
       app.new
     end
 
     it 'chooses session mode if sessions are enabled' do
-      Travis::SSO::SinglePage.should_receive(:new).never
-      Travis::SSO::Session.should_receive(:new).once.pass_thru
+      expect(Travis::SSO::SinglePage).to_not receive(:new)
+      expect(Travis::SSO::Session).to receive(:new).once.and_call_original
       app.enable :sessions
       app.new
     end
