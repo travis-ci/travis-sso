@@ -1,4 +1,4 @@
-# Travis::SSO
+# Travis::SSO [![Build Status](https://travis-ci.com/travis-ci/travis-sso.svg?branch=master)](https://travis-ci.com/travis-ci/travis-sso)
 
 Implements Travis CI Single Sign-On as a Rack middleware.
 

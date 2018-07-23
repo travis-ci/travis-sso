@@ -8,5 +8,4 @@ end
 
 group :test do
   gem 'rspec'
-  gem 'flexmock'
 end
