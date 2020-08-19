@@ -7,7 +7,7 @@
     <link rel="icon" type="image/png" href="%public%/favicon.ico">
     <script>
       window.addEventListener('message', function(event) {
-        if(event.origin == "%endpoint%") {
+        if(getHostName(event.origin) == getHostName("%endpoint%")) {
           if(event.data.token) {
             document.getElementById('sso_token').value = event.data.token;
             document.forms[0].submit();
@@ -19,6 +19,9 @@
       window.setTimeout(function() {
         document.getElementById('warning').style.display = 'inherit';
       }, 10000);
+      function getHostName(url) {
+        return url.split("//")[1].split("/")[0].split("?")[0];
+      }
     </script>
     <style>
       @-webkit-keyframes blink { 0% { opacity: 0 } 100% { opacity: 1 } }
