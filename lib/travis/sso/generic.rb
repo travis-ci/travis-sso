@@ -3,6 +3,8 @@ require 'travis/sso'
 require 'rack'
 require 'multi_json'
 require 'open-uri'
+require 'net/http'
+require 'openssl'
 require 'rotp'
 require 'yubikey'
 
@@ -12,12 +14,13 @@ module Travis
       WHITELIST = ['/favicon.ico']
       CALLBACKS = [:pass, :set_user, :authenticated?, :authorized?, :whitelisted?,
                   :get_otp_secret, :set_otp_secret, :describe_otp, :generate_otp_secret]
-      attr_reader :app, :endpoint, :files, :login_page, :otp_page, :setup_page, :accept, :whitelist, :use_otp
+      attr_reader :app, :endpoint, :files, :ssl_verify, :login_page, :otp_page, :setup_page, :accept, :whitelist, :use_otp
       alias use_otp? use_otp
 
       def initialize(app, options = {})
         @app           = app
         @endpoint      = options[:endpoint]       || "https://api.travis-ci.org"
+        @ssl_verify    = options.has_key?(:ssl_verify) ? options[:ssl_verify] : true
         @accept        = options[:accept]         || 'application/vnd.travis-ci.2+json'
         static_dir     = options[:static_dir]     || File.expand_path('../public',     __FILE__)
         template       = options[:template]       || File.expand_path('../login.html', __FILE__)
@@ -99,8 +102,14 @@ module Travis
 
         def login(request)
           return unless token = sso_token(request)
-          raw  = open("#{endpoint}/users?access_token=#{token}", 'Accept' => accept)
-          data = MultiJson.decode(raw.read)
+          uri = URI.parse("#{endpoint}/users?access_token=#{token}")
+          http = Net::HTTP.new(uri.host, 443)
+          http.use_ssl = true
+          http.verify_mode = ssl_verify ? OpenSSL::SSL::VERIFY_PEER : OpenSSL::SSL::VERIFY_NONE
+          req = Net::HTTP::Get.new(uri.request_uri)
+          req['Accept'] = accept
+          response = http.request(req)
+          data = MultiJson.decode(response.body)
           user = data['user'].merge('token' =>  token)
 
           if authorized?(user)
@@ -113,9 +122,8 @@ module Travis
           else
             response(403, "access denied for #{user['login']}", "Content-Type" => "text/plain")
           end
-        rescue OpenURI::HTTPError => error
-          response(error.io.read, Integer(error.message[/40\d/] || 403))
-        rescue EOFError
+        rescue StandardError => error
+          response(error.message, error.backtrace, Integer(error.message[/40\d/] || 403))
         end
 
         def sso_token(request)
