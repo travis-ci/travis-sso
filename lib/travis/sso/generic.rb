@@ -104,8 +104,10 @@ module Travis
           return unless token = sso_token(request)
           uri = URI.parse("#{endpoint}/users?access_token=#{token}")
           http = Net::HTTP.new(uri.host, uri.port)
-          http.use_ssl = true
-          http.verify_mode = ssl_verify ? OpenSSL::SSL::VERIFY_PEER : OpenSSL::SSL::VERIFY_NONE
+          if url.scheme == 'https'
+            http.use_ssl = true
+            http.verify_mode = ssl_verify ? OpenSSL::SSL::VERIFY_PEER : OpenSSL::SSL::VERIFY_NONE
+          end
           req = Net::HTTP::Get.new(uri.request_uri)
           req['Accept'] = accept
           response = http.request(req)
