@@ -12,7 +12,7 @@
             document.getElementById('sso_token').value = event.data.token;
             document.forms[0].submit();
           } else if(event.data == "redirect") {
-            window.location = "%endpoint%/auth/handshake?redirect_uri=%origin%";
+            window.location = "%endpoint%/auth/handshake/%provider%?redirect_uri=%origin%";
           }
         }
       });
