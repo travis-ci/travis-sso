@@ -115,7 +115,8 @@ module Travis
           user = data['user'].merge('token' =>  token)
 
           if authorized?(user)
-            template(login_page, request, provider: get_provider(user))
+            provider = get_provider(user).empty? ? 'github' : get_provider(user)
+            template(login_page, request, provider: provider)
             if result = otp(user, request)
               result
             else
