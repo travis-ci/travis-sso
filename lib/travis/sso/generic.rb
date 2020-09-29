@@ -13,13 +13,14 @@ module Travis
     class Generic
       WHITELIST = ['/favicon.ico']
       CALLBACKS = [:pass, :set_user, :authenticated?, :authorized?, :whitelisted?,
-                  :get_otp_secret, :set_otp_secret, :describe_otp, :generate_otp_secret, :get_provider]
-      attr_reader :app, :endpoint, :files, :ssl_verify, :login_page, :otp_page, :setup_page, :accept, :whitelist, :use_otp
+                  :get_otp_secret, :set_otp_secret, :describe_otp, :generate_otp_secret]
+      attr_reader :app, :endpoint, :provider, :files, :ssl_verify, :login_page, :otp_page, :setup_page, :accept, :whitelist, :use_otp
       alias use_otp? use_otp
 
       def initialize(app, options = {})
         @app           = app
         @endpoint      = options[:endpoint]       || "https://api.travis-ci.org"
+        @provider      = options[:provider]       || 'github'
         @ssl_verify    = options.has_key?(:ssl_verify) ? options[:ssl_verify] : true
         @accept        = options[:accept]         || 'application/vnd.travis-ci.2+json'
         static_dir     = options[:static_dir]     || File.expand_path('../public',     __FILE__)
@@ -28,7 +29,7 @@ module Travis
         setup_template = options[:setup_template] || File.expand_path('../setup.html', __FILE__)
         static         = Rack::File.new(static_dir)
         @files         = Rack::ConditionalGet.new(static)
-        @login_page    = File.read(template).gsub('%endpoint%', endpoint)
+        @login_page    = File.read(template).gsub('%endpoint%', endpoint).gsub('%provider%', provider)
         @otp_page      = File.read(otp_template)
         @setup_page    = File.read(setup_template)
         @whitelist     = WHITELIST + Array(options[:whitelist])
@@ -115,8 +116,6 @@ module Travis
           user = data['user'].merge('token' =>  token)
 
           if authorized?(user)
-            provider = get_provider(user).empty? ? 'github' : get_provider(user)
-            template(login_page, request, provider: provider)
             if result = otp(user, request)
               result
             else
