@@ -14,12 +14,13 @@ module Travis
       WHITELIST = ['/favicon.ico']
       CALLBACKS = [:pass, :set_user, :authenticated?, :authorized?, :whitelisted?,
                   :get_otp_secret, :set_otp_secret, :describe_otp, :generate_otp_secret]
-      attr_reader :app, :endpoint, :files, :ssl_verify, :login_page, :otp_page, :setup_page, :accept, :whitelist, :use_otp
+      attr_reader :app, :endpoint, :provider, :files, :ssl_verify, :login_page, :otp_page, :setup_page, :accept, :whitelist, :use_otp
       alias use_otp? use_otp
 
       def initialize(app, options = {})
         @app           = app
         @endpoint      = options[:endpoint]       || "https://api.travis-ci.org"
+        @provider      = options[:provider]       || 'github'
         @ssl_verify    = options.has_key?(:ssl_verify) ? options[:ssl_verify] : true
         @accept        = options[:accept]         || 'application/vnd.travis-ci.2+json'
         static_dir     = options[:static_dir]     || File.expand_path('../public',     __FILE__)
@@ -28,7 +29,7 @@ module Travis
         setup_template = options[:setup_template] || File.expand_path('../setup.html', __FILE__)
         static         = Rack::File.new(static_dir)
         @files         = Rack::ConditionalGet.new(static)
-        @login_page    = File.read(template).gsub('%endpoint%', endpoint)
+        @login_page    = File.read(template).gsub('%endpoint%', endpoint).gsub('%provider%', provider)
         @otp_page      = File.read(otp_template)
         @setup_page    = File.read(setup_template)
         @whitelist     = WHITELIST + Array(options[:whitelist])
@@ -124,8 +125,8 @@ module Travis
           else
             response(403, "access denied for #{user['login']}", "Content-Type" => "text/plain")
           end
-        rescue StandardError => error
-          response(error.message, error.backtrace, Integer(error.message[/40\d/] || 403))
+        #rescue StandardError => error
+          #response(error.message, error.backtrace, Integer(error.message[/40\d/] || 403))
         end
 
         def sso_token(request)
