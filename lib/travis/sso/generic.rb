@@ -125,8 +125,8 @@ module Travis
           else
             response(403, "access denied for #{user['login']}", "Content-Type" => "text/plain")
           end
-        rescue StandardError => error
-          response(error.message, error.backtrace, Integer(error.message[/40\d/] || 403))
+        #rescue StandardError => error
+          #response(error.message, error.backtrace, Integer(error.message[/40\d/] || 403))
         end
 
         def sso_token(request)
