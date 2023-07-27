@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'travis/sso'
 
 module Travis
@@ -25,14 +27,14 @@ module Travis
 
       private
 
-        def session(request)
-          request.env.fetch(session_key)
-        end
+      def session(request)
+        request.env.fetch(session_key)
+      end
 
-        def authenticity_token(request)
-          session = session(request)
-          session[:csrf] || session['_csrf_token']
-        end
+      def authenticity_token(request)
+        session = session(request)
+        session[:csrf] || session['_csrf_token']
+      end
     end
   end
 end
