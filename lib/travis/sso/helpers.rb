@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'ostruct'
 
 module Travis
@@ -6,6 +8,7 @@ module Travis
       def self.user_class
         return ::User         if defined? ::User
         return ::Travis::User if defined? ::Travis::User
+
         OpenStruct
       end
 
@@ -21,13 +24,15 @@ module Travis
         @current_user ||= begin
           env           = send(:env)      if respond_to? :env
           session       = send(:session)  if respond_to? :session
-          env         ||= request.env     if respond_to? :request or not session
+          env         ||= request.env     if respond_to?(:request) || !session
           env         ||= {}
           session     ||= env['rack.session']     || {}
           user_info     = env['travis.user_info'] || {}
-          user_id       = user_info['id']         ||= session['user_id']
+          user_id       = user_info['id'] ||= session['user_id']
           user_class    = Travis::SSO::Helpers.user_class
-          user_class.respond_to?(:find_by_id) ? user_class.find_by_id(user_id) : user_class.new(user_info) if user_id
+          if user_id
+            user_class.respond_to?(:find_by_id) ? user_class.find_by_id(user_id) : user_class.new(user_info)
+          end
         end
       end
 

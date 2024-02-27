@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'travis/sso'
 use Travis::SSO, mode: :single_page
-run -> env { [200, {'Content-Type' => 'text/plain'}, ["Hi, #{env['travis.user_info']['name']}!"]] }
+run ->(env) { [200, { 'Content-Type' => 'text/plain' }, ["Hi, #{env['travis.user_info']['name']}!"]] }

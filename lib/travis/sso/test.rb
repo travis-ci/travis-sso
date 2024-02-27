@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Travis
   module SSO
     class Test < Session
@@ -13,7 +15,7 @@ module Travis
         end
       end
 
-      def authenticated?(request)
+      def authenticated?(_request)
         !!self.class.user
       end
 
@@ -24,4 +26,3 @@ module Travis
     end
   end
 end
-
