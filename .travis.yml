@@ -1,1 +1,4 @@
 language: ruby
+rvm:
+  - 3.2
+  - 3.1
