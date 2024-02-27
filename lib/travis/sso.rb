@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Travis
   module SSO
     autoload :Callback,   'travis/sso/callback'
@@ -16,8 +18,7 @@ module Travis
     end
 
     # avoid pulling in constants on extend
-    def self.extend_object(*)
-    end
+    def self.extend_object(*); end
 
     # this is called by sinatra when used as extension
     def self.registered(app)

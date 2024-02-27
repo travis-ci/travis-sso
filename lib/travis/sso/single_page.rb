@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'travis/sso'
 require 'stringio'
 
@@ -6,10 +8,10 @@ module Travis
     class SinglePage < Generic
       CLEAN_ENV = {
         'REQUEST_METHOD' => 'GET',
-        'rack.input'     => StringIO.new,
-        'CONTENT_LENGTH' => "0",
-        'CONTENT_TYPE'   => ""
-      }
+        'rack.input' => StringIO.new,
+        'CONTENT_LENGTH' => '0',
+        'CONTENT_TYPE' => ''
+      }.freeze
 
       def pass(request)
         app.call request.env.merge(CLEAN_ENV)

@@ -1,22 +1,24 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'ostruct'
 
 describe Travis::SSO do
   describe 'as middleware' do
     let(:callbacks) do
-      { :pass => proc {}, :set_user => proc {}, :authenticated? => proc {} }
+      { pass: proc {}, set_user: proc {}, authenticated?: proc {} }
     end
 
     it 'maps session mode to Travis::SSO::Session' do
-      expect(Travis::SSO.new(nil, :mode => :session)).to be_a(Travis::SSO::Session)
+      expect(Travis::SSO.new(nil, mode: :session)).to be_a(Travis::SSO::Session)
     end
 
     it 'maps single_page mode to Travis::SSO::SinglePage' do
-      expect(Travis::SSO.new(nil, :mode => :single_page)).to be_a(Travis::SSO::SinglePage)
+      expect(Travis::SSO.new(nil, mode: :single_page)).to be_a(Travis::SSO::SinglePage)
     end
 
     it 'maps callback mode to Travis::SSO::Session' do
-      expect(Travis::SSO.new(nil, callbacks.merge(:mode => :callback))).to be_a(Travis::SSO::Callback)
+      expect(Travis::SSO.new(nil, callbacks.merge(mode: :callback))).to be_a(Travis::SSO::Callback)
     end
 
     it 'defaults to callback mode' do
@@ -58,7 +60,7 @@ describe Travis::SSO do
 
     it 'reject non-matching routes' do
       sso = Travis::SSO::Generic.new(app, whitelist: '/foo')
-      expect(app).to_not receive(:call)
+      expect(app).not_to receive(:call)
       sso.send(:whitelisted, request)
     end
   end
@@ -81,7 +83,7 @@ describe Travis::SSO do
     end
 
     it 'chooses session mode if sessions are enabled' do
-      expect(Travis::SSO::SinglePage).to_not receive(:new)
+      expect(Travis::SSO::SinglePage).not_to receive(:new)
       expect(Travis::SSO::Session).to receive(:new).once.and_call_original
       app.enable :sessions
       app.new
