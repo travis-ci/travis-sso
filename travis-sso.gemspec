@@ -1,9 +1,11 @@
 # frozen_string_literal: true
+$LOAD_PATH.unshift File.expand_path('lib', __dir__)
 
+require 'travis/sso/version'
 require 'English'
 Gem::Specification.new do |gem|
   gem.name          = 'travis-sso'
-  gem.version       = '0.0.1'
+  gem.version       = TravisSso::VERSION
   gem.authors       = ['Konstantin Haase']
   gem.email         = ['konstantin.mailinglists@googlemail.com']
   gem.description   = 'Travis CI Singe Sign-On as a Rack middleware'

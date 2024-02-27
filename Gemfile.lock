@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    travis-sso (0.0.1)
+    travis-sso (0.1.0)
       multi_json
       rack
       rotp
