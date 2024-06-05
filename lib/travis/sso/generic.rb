@@ -8,6 +8,7 @@ require 'open-uri'
 require 'net/http'
 require 'openssl'
 require 'rotp'
+require 'rqrcode'
 require 'yubikey'
 
 module Travis
@@ -173,7 +174,8 @@ module Travis
           secret  = params(request)['otp_secret'] || generate_otp_secret(user)
           totp    = ROTP::TOTP.new(secret)
           otp_url = totp.provisioning_uri(describe_otp(request, user))
-          qr_img  = "https://chart.googleapis.com/chart?chs=200x200&chld=M|0&cht=qr&chl=#{Rack::Utils.escape(otp_url)}"
+          qr_code = RQRCode::QRCode.new(otp_url)
+          qr_img  = qr_code.as_svg(module_size: 5)
 
           if otp =~ /\A\d{6}\z/
             if totp.verify(otp)
