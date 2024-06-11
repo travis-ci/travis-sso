@@ -40,7 +40,7 @@
         Please install <a href="https://support.google.com/accounts/answer/1066447?hl=en">Google Authenticator</a> (or something similar)
         and use it to <b>scan this QR code</b>:
       </p>
-      <a href="%otp_url%"><img id="qr" src="%qr_img%" alt="QR code"></a>
+      <a href="%otp_url%">%qr_img%</a>
       <p>Then enter a valid one time password:</p>
       <form method="post">
         <input type="hidden" name="authenticity_token" id="authenticity_token" value="%csrf%">
