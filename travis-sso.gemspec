@@ -21,5 +21,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency 'multi_json'
   gem.add_dependency 'rack'
   gem.add_dependency 'rotp'
+  gem.add_dependency 'rqrcode'
   gem.add_dependency 'yubikey'
 end
