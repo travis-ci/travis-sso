@@ -20,7 +20,7 @@ module Travis
       end
 
       def allow(request)
-        set_user(request, self.class.user)
+        set_user(request, self.class.user) if self.class.user
         super
       end
     end
